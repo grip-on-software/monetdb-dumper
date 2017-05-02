@@ -55,7 +55,7 @@ public class Databasedumper {
             FileOutputStream output = new FileOutputStream(fileName, false);
             GZIPOutputStream gzip = new GZIPOutputStream(output);
             Writer writer = new OutputStreamWriter(gzip, "UTF-8");
-            CSVWriter csv = new CSVWriter(writer)
+            CSVWriter csv = new CSVWriter(writer, ',', '"', '\\')
         ) {
             ResultSetHelper resultService = new ResultSetMonetHelper();
             csv.setResultService(resultService);
