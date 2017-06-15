@@ -70,4 +70,25 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-post-init">
+        <condition property="databasedumper.generate.properties">
+            <and>
+                <isset property="databasedumper.url" />
+                <isset property="databasedumper.user" />
+                <isset property="databasedumper.password" />
+                <isset property="databasedumper.schema" />
+            </and>
+        </condition>
+        <fail unless="databasedumper.generate.properties"
+            message="You must set the properties databasedumper.{url,user,password,schema} in a private properties file or pass them through ant -D" />
+    </target>
+    <target name="-pre-compile" if="databasedumper.generate.properties">
+        <propertyfile file="src/databasedumper/database.properties"
+            comment="Variables used to connect to the MonetDB database.">
+            <entry key="url" operation="=" value="${databasedumper.url}" />
+            <entry key="user" operation="=" value="${databasedumper.user}" />
+            <entry key="password" operation="=" value="${databasedumper.password}" />
+            <entry key="schema" operation="=" value="${databasedumper.schema}" />
+        </propertyfile>
+    </target>
 </project>
