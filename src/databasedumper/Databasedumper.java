@@ -60,13 +60,23 @@ public class Databasedumper {
             ResultSetHelper resultService = new ResultSetMonetHelper();
             csv.setResultService(resultService);
             
-            String sql = "SELECT * FROM " + bundle.getString("schema") + "." + table;
-            try (
-                Connection conn = getConnection(bundle);
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)
-            ) {
-                csv.writeAll(rs, false);
+            try (Connection conn = getConnection(bundle)) {
+                String schema = bundle.getString("schema");
+                String sql = "SELECT * FROM " + schema + "." + table;
+                if (!System.getProperty("databasedumper.encrypted").isEmpty()) {
+                    try (ResultSet mrs = conn.getMetaData().getColumns("", schema, table, "encryption")) {
+                        if (mrs.next()) {
+                            sql += " WHERE encryption <> 0";
+                        }
+                    }
+                }
+                Logger.getLogger(Databasedumper.class.getName()).log(Level.INFO, "Executing query {0}", sql);
+                try (
+                    Statement stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery(sql)
+                ) {
+                    csv.writeAll(rs, false);
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(Databasedumper.class.getName()).log(Level.SEVERE, null, ex);
             }
