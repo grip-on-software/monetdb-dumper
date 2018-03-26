@@ -51,6 +51,7 @@ public class Databasedumper {
         
         String table = args[0];
         String fileName = args[1];
+        String encrypted = System.getProperty("databasedumper.encrypted");
         try (
             FileOutputStream output = new FileOutputStream(fileName, false);
             GZIPOutputStream gzip = new GZIPOutputStream(output);
@@ -63,7 +64,7 @@ public class Databasedumper {
             try (Connection conn = getConnection(bundle)) {
                 String schema = bundle.getString("schema");
                 String sql = "SELECT * FROM " + schema + "." + table;
-                if (!System.getProperty("databasedumper.encrypted").isEmpty()) {
+                if (encrypted != null && !encrypted.isEmpty()) {
                     try (ResultSet mrs = conn.getMetaData().getColumns("", schema, table, "encryption")) {
                         if (mrs.next()) {
                             sql += " WHERE encryption <> 0";
