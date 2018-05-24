@@ -76,7 +76,7 @@ public class Databasedumper {
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)
                 ) {
-                    csv.writeAll(rs, false);
+                    csv.writeAll(rs, false, false, false);
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Databasedumper.class.getName()).log(Level.SEVERE, null, ex);

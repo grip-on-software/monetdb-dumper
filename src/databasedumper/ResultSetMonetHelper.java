@@ -128,7 +128,7 @@ public class ResultSetMonetHelper extends ResultSetHelperService {
         }
 
         if (rs.wasNull() || value == null) {
-            value = "";
+            value = "\7NUL\7";
         }
 
         return value;
