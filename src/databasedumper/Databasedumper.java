@@ -1,6 +1,6 @@
 /*
  *  Copyright 2015 Bytecode Pty Ltd.
- *  Copyright 2017 ICTU
+ *  Copyright 2017-2018 ICTU
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class Databasedumper {
     public static void main(String[] args) {
         String usage = "\nUsage: java -jar databasedumper.jar <table> <file>";
         if (args.length <= 1 || "--help".equals(args[0])) {
-            throw new RuntimeException(usage);
+            throw new DumperException(usage);
         }
         ResourceBundle bundle = ResourceBundle.getBundle("databasedumper.database");
         
@@ -56,32 +56,29 @@ public class Databasedumper {
             FileOutputStream output = new FileOutputStream(fileName, false);
             GZIPOutputStream gzip = new GZIPOutputStream(output);
             Writer writer = new OutputStreamWriter(gzip, "UTF-8");
-            CSVWriter csv = new CSVWriter(writer, ',', '"', '\\')
+            CSVWriter csv = new CSVWriter(writer, ',', '"', '\\', "\n");
+            Connection conn = getConnection(bundle)
         ) {
             ResultSetHelper resultService = new ResultSetMonetHelper();
             csv.setResultService(resultService);
             
-            try (Connection conn = getConnection(bundle)) {
-                String schema = bundle.getString("schema");
-                String sql = "SELECT * FROM " + schema + "." + table;
-                if (encrypted != null && !encrypted.isEmpty()) {
-                    try (ResultSet mrs = conn.getMetaData().getColumns("", schema, table, "encryption")) {
-                        if (mrs.next()) {
-                            sql += " WHERE encryption <> 0";
-                        }
+            String schema = bundle.getString("schema");
+            String sql = "SELECT * FROM " + schema + "." + table;
+            if (encrypted != null && !encrypted.isEmpty()) {
+                try (ResultSet mrs = conn.getMetaData().getColumns("", schema, table, "encryption")) {
+                    if (mrs.next()) {
+                        sql += " WHERE encryption <> 0";
                     }
                 }
-                Logger.getLogger(Databasedumper.class.getName()).log(Level.INFO, "Executing query {0}", sql);
-                try (
-                    Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery(sql)
-                ) {
-                    csv.writeAll(rs, false, false, false);
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Databasedumper.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
+            Logger.getLogger(Databasedumper.class.getName()).log(Level.INFO, "Executing query {0}", sql);
+            try (
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)
+            ) {
+                csv.writeAll(rs, false, false, false);
+            }
+        } catch (IOException | SQLException ex) {
             Logger.getLogger(Databasedumper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

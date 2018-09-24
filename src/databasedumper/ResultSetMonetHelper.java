@@ -1,6 +1,6 @@
 /*
  *  Copyright 2015 Bytecode Pty Ltd.
- *  Copyright 2017 ICTU
+ *  Copyright 2017-2018 ICTU
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
-import org.apache.commons.lang3.ObjectUtils;
+import java.util.Objects;
 
 /**
  *
@@ -48,50 +48,36 @@ public class ResultSetMonetHelper extends ResultSetHelperService {
     }
     
     private  String getColumnValue(ResultSet rs, int colType, int colIndex, boolean trim, String dateFormatString, String timestampFormatString)
-         throws SQLException, IOException {
+         throws SQLException {
 
         String value = "";
 
         switch (colType) {
            case Types.BIT:
            case Types.JAVA_OBJECT:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getObject(colIndex), "");
-              value = ObjectUtils.toString(rs.getObject(colIndex), "");
+              value = Objects.toString(rs.getObject(colIndex), "");
               break;
            case Types.BOOLEAN:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getBoolean(colIndex));
-              value = ObjectUtils.toString(rs.getBoolean(colIndex));
+              value = Objects.toString(rs.getBoolean(colIndex));
               break;
            case Types.BIGINT:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getLong(colIndex));
-              value = ObjectUtils.toString(rs.getLong(colIndex));
+              value = Objects.toString(rs.getLong(colIndex));
               break;
            case Types.DECIMAL:
            case Types.REAL:
            case Types.NUMERIC:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getBigDecimal(colIndex), "");
-              value = ObjectUtils.toString(rs.getBigDecimal(colIndex), "");
+              value = Objects.toString(rs.getBigDecimal(colIndex), "");
               break;
            case Types.DOUBLE:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getDouble(colIndex));
-              value = ObjectUtils.toString(rs.getDouble(colIndex));
+              value = Objects.toString(rs.getDouble(colIndex));
               break;
            case Types.FLOAT:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getFloat(colIndex));
-              value = ObjectUtils.toString(rs.getFloat(colIndex));
+              value = Objects.toString(rs.getFloat(colIndex));
               break;
            case Types.INTEGER:
            case Types.TINYINT:
            case Types.SMALLINT:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getInt(colIndex));
-              value = ObjectUtils.toString(rs.getInt(colIndex));
+              value = Objects.toString(rs.getInt(colIndex));
               break;
            case Types.DATE:
               java.sql.Date date = rs.getDate(colIndex);
@@ -101,9 +87,7 @@ public class ResultSetMonetHelper extends ResultSetHelperService {
               }
               break;
            case Types.TIME:
-  // Once Java 7 is the minimum supported version.
-  //            value = Objects.toString(rs.getTime(colIndex), "");
-              value = ObjectUtils.toString(rs.getTime(colIndex), "");
+              value = Objects.toString(rs.getTime(colIndex), "");
               break;
            case Types.TIMESTAMP:
               value = handleTimestamp(rs.getTimestamp(colIndex), timestampFormatString);
