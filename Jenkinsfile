@@ -13,6 +13,7 @@ pipeline {
     }
     triggers {
         gitlab(triggerOnPush: true, triggerOnMergeRequest: true, branchFilterType: 'All')
+        cron('H H * * 5')
     }
 
     post {
