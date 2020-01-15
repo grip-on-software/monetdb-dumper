@@ -41,7 +41,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.branch=$BRANCH_NAME'
+                    sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=monetdb-dumper:$BRANCH_NAME -Dsonar.projectName="MonetDB dumper $BRANCH_NAME"'
                 }
             }
         }
