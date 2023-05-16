@@ -2,7 +2,9 @@
 ${licenseFirst}
 </#if>
 ${licensePrefix} Copyright 2015 Bytecode Pty Ltd.
-${licensePrefix} Copyright 2017-2018 ICTU
+${licensePrefix} Copyright 2017-2020 ICTU
+${licensePrefix} Copyright 2017-2022 Leiden University
+${licensePrefix} Copyright 2017-2023 Leon Helwerda
 ${licensePrefix}
 ${licensePrefix} Licensed under the Apache License, Version 2.0 (the "License");
 ${licensePrefix} you may not use this file except in compliance with the License.
