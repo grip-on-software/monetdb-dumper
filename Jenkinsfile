@@ -4,6 +4,7 @@ pipeline {
     environment {
         BUILD_TARGET = 'default'
         BUILD_FILE = 'build.xml'
+        GITLAB_TOKEN = credentials('monetdb-dumper-gitlab-token')
         SCANNER_HOME = tool name: 'SonarQube Scanner 3', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     }
 
@@ -12,7 +13,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     triggers {
-        gitlab(triggerOnPush: true, triggerOnMergeRequest: true, branchFilterType: 'All')
+        gitlab(triggerOnPush: true, triggerOnMergeRequest: true, branchFilterType: 'All', secretToken: env.GITLAB_TOKEN)
         cron('H H * * 5')
     }
 
@@ -20,14 +21,26 @@ pipeline {
         success {
             archiveArtifacts artifacts: 'dist/**', excludes: 'dist/javadoc/**', onlyIfSuccessful: true
             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'dist/javadoc', reportFiles: 'index.html', reportName: 'Javadoc', reportTitles: ''])
-            updateGitlabCommitStatus name: env.JOB_NAME, state: 'success'
         }
         failure {
             updateGitlabCommitStatus name: env.JOB_NAME, state: 'failed'
         }
+        aborted {
+            updateGitlabCommitStatus name: env.JOB_NAME, state: 'canceled'
+        }
     }
 
     stages {
+        stage('Start') {
+            when {
+                not {
+                    triggeredBy 'TimerTrigger'
+                }
+            }
+            steps {
+                updateGitlabCommitStatus name: env.JOB_NAME, state: 'running'
+            }
+        }
         stage('Build') {
             steps {
                 updateGitlabCommitStatus name: env.JOB_NAME, state: 'running'
@@ -43,6 +56,16 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=monetdb-dumper:$BRANCH_NAME -Dsonar.projectName="MonetDB dumper $BRANCH_NAME"'
                 }
+            }
+        }
+        stage('Status') {
+            when {
+                not {
+                    triggeredBy 'TimerTrigger'
+                }
+            }
+            steps {
+                updateGitlabCommitStatus name: env.JOB_NAME, state: 'success'
             }
         }
     }
