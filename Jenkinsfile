@@ -18,15 +18,15 @@ pipeline {
     }
 
     post {
-        success {
-            archiveArtifacts artifacts: 'dist/**', excludes: 'dist/javadoc/**', onlyIfSuccessful: true
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'dist/javadoc', reportFiles: 'index.html', reportName: 'Javadoc', reportTitles: ''])
-        }
         failure {
             updateGitlabCommitStatus name: env.JOB_NAME, state: 'failed'
         }
         aborted {
             updateGitlabCommitStatus name: env.JOB_NAME, state: 'canceled'
+        }
+        always {
+            archiveArtifacts artifacts: 'dist/**', excludes: 'dist/javadoc/**', onlyIfSuccessful: true
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'dist/javadoc', reportFiles: 'index.html', reportName: 'Javadoc', reportTitles: ''])
         }
     }
 
@@ -43,7 +43,6 @@ pipeline {
         }
         stage('Build') {
             steps {
-                updateGitlabCommitStatus name: env.JOB_NAME, state: 'running'
                 withCredentials([file(credentialsId: 'monetdb-dumper-properties', variable: 'BUILD_PROPERTIES')]) {
                     withAnt(installation: 'Ant 1.10.1', jdk: 'JDK 8') {
                         sh "ant -buildfile $BUILD_FILE -propertyfile $BUILD_PROPERTIES $BUILD_TARGET"
