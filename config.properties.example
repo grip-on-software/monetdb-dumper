@@ -1,0 +1,4 @@
+databasedumper.url=jdbc:monetdb://localhost/gros
+databasedumper.user=monetdb
+databasedumper.password=monetdb
+databasedumper.schema=gros
