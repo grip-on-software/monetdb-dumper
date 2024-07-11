@@ -42,6 +42,7 @@ import java.util.zip.GZIPOutputStream;
  * @author Leon Helwerda
  */
 public class Databasedumper {
+    private final static String VERSION = "0.0.3";
 
     /**
      * @param args the command line arguments
@@ -49,7 +50,7 @@ public class Databasedumper {
     public static void main(String[] args) {
         String usage = "\nUsage: java -jar databasedumper.jar <table> <file>";
         if (args.length <= 1 || "--help".equals(args[0])) {
-            throw new DumperException(usage);
+            throw new DumperException(usage + "\nMonetDB dumper " + VERSION);
         }
         ResourceBundle bundle = ResourceBundle.getBundle("databasedumper.database");
         
