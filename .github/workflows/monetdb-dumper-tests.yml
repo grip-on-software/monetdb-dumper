@@ -1,0 +1,36 @@
+name: grip-on-software/monetdb-dumper
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.6
+        with:
+          fetch-depth: 0
+      - name: Start MonetDB instance
+        run: docker run --name monetdb -p 50000:50000 -d --rm -e MDB_DAEMON_PASS=monetdb-root -e MDB_DB_ADMIN_PASS=monetdb -e MDB_CREATE_DBS=gros_test --health-interval=2s monetdb/monetdb:Dec2023-SP3
+      - name: Create test database
+        run: 'cat create-test-data.sql | docker exec -i monetdb /bin/bash -c "echo user=monetdb > ~/.monetdb; echo password=\$MDB_DB_ADMIN_PASS >> ~/.monetdb && monetdb create gros_test; while [ ! -f /var/monetdb5/dbfarm/.container_initialized ]; do sleep 1; done; mclient -d gros_test -"'
+      - uses: actions/setup-java@v4.2.1
+        with:
+          distribution: semeru
+          java-version: 21
+      - uses: cedx/setup-ant@v2.0.0
+        with:
+          version: 1.10.14
+      - name: Build and test
+        run: ant -buildfile build.xml -propertyfile config.properties.example
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2.1.1
+        env:
+          SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        if: "${{ success() }}"
