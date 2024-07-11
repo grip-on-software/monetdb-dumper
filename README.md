@@ -1,5 +1,13 @@
 # MonetDB dumper
 
+[![Build 
+status](https://github.com/grip-on-software/monetdb-dumper/actions/workflows/monetdb-dumper-tests.yml/badge.svg)](https://github.com/grip-on-software/monetdb-dumper/actions/workflows/monetdb-dumper-tests.yml)
+[![Coverage 
+Status](https://coveralls.io/repos/github/grip-on-software/monetdb-dumper/badge.svg?branch=master)](https://coveralls.io/github/grip-on-software/monetdb-dumper?branch=master)
+[![Quality Gate
+Status](https://sonarcloud.io/api/project_badges/measure?project=grip-on-software_monetdb-dumper&metric=alert_status)](https://sonarcloud.io/project/overview?id=grip-on-software_monetdb-dumper)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12723675.svg)](https://doi.org/10.5281/zenodo.12723675)
+
 This repository contains a Java application which can interact with a MonetDB
 database containing a Grip on Software database in order to export a CSV 
 representation of a table that can be imported again using scripts in the 
@@ -78,6 +86,13 @@ Test output should indicate the successful, failed and skipped tests. Once the
 test is complete, test result and coverage information is made available in 
 `build/test`, with JUnit XML files in `junit/junit.xml` in that directory and 
 JaCoCo coverage XML in `jacoco.xml` and HTML reports in `jacoco/index.html`.
+
+[GitHub Actions](https://github.com/grip-on-software/monetdb-dumper/actions) is 
+used to run the unit tests and report on coverage on commits and pull requests. 
+This includes quality gate scans tracked by 
+[SonarCloud](https://sonarcloud.io/project/overview?id=grip-on-software_monetdb-dumper) 
+and [Coveralls](https://coveralls.io/github/grip-on-software/monetdb-dumper) 
+for coverage history.
 
 ## License
 
