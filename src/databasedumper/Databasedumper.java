@@ -45,10 +45,11 @@ public class Databasedumper {
     private final static String VERSION = "0.0.3";
 
     /**
+     * Main entry point to run the database dumper application.
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String usage = "\nUsage: java -jar databasedumper.jar <table> <file>";
+        String usage = "\nUsage: java [-Ddatabasedumper...=...] -jar databasedumper.jar <table> <file>";
         if (args.length <= 1 || "--help".equals(args[0])) {
             throw new DumperException(usage + "\nMonetDB dumper " + VERSION);
         }
@@ -89,9 +90,9 @@ public class Databasedumper {
     }
 
     public static Connection getConnection(ResourceBundle bundle) throws SQLException {
-        String url = bundle.getString("url").trim();
-        String user = bundle.getString("user").trim();
-        String password = bundle.getString("password").trim();
+        String url = System.getProperty("databasedumper.url", bundle.getString("url")).trim();
+        String user = System.getProperty("databasedumper.user", bundle.getString("user")).trim();
+        String password = System.getProperty("databasedumper.password", bundle.getString("password")).trim();
 
         Properties connectionProps = new Properties();
         connectionProps.put("user", user);

@@ -49,6 +49,9 @@ java -Ddatabasedumper.encrypted=true -jar dist/databasedumper.jar TABLE OUTPUT
 ```
 
 Skip the `-D` define if you want to export unencrypted personal data as well. 
+It is also possible to override some of the properties defined in the 
+`config.properties` file included during the build using defines 
+(`databasedumper.url`, `databasedumper.user` and `databasedumper.password`).
 Replace the `TABLE` and `OUTPUT` with the table name and output file path, 
 respectively. The output file will be a CSV file compressed with GZip, so 
 typically the extension of the file is `.csv.gz`.
