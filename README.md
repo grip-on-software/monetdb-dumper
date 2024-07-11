@@ -53,6 +53,29 @@ Replace the `TABLE` and `OUTPUT` with the table name and output file path,
 respectively. The output file will be a CSV file compressed with GZip, so 
 typically the extension of the file is `.csv.gz`.
 
+## Testing
+
+Tests can be performed during the build using:
+
+```
+ant -buildfile build.xml -propertyfile nbproject/private/config.properties test
+```
+
+Note that the tests are essentially integration tests, which requires 
+a database to be set up beforehand, otherwise it will skip or fail tests.
+
+- A MonetDB database instance should be running on `localhost` on the default 
+  port (`50000`).
+- A database with the name `gros_test` should be created on the instance.
+- The database should have a `gros` schema and a table called `test` with two 
+  rows and columns of various types in it, specifically as can be imported from 
+  the `create-test-data.sql` file.
+
+Test output should indicate the successful, failed and skipped tests. Once the 
+test is complete, test result and coverage information is made available in 
+`build/test`, with JUnit XML files in `junit/junit.xml` in that directory and 
+JaCoCo coverage XML in `jacoco.xml` and HTML reports in `jacoco/index.html`.
+
 ## License
 
 The MonetDB importer is licensed under the Apache 2.0 License. Dependency 
@@ -64,3 +87,11 @@ and have the following licenses:
 - [monetdb-jdbc](https://github.com/MonetDB/monetdb-java): MPL v2.0, available 
   from [MonetDB Java Download Area](https://www.monetdb.org/downloads/Java/)
 - [opencsv](https://opencsv.sourceforge.net/): Apache 2.0 License
+
+Test libraries:
+
+- [apiguardian](https://github.com/apiguardian-team/apiguardian): Apache 2.0 
+  License
+- [jacoco](https://github.com/jacoco/jacoco) (agent and ant task): EPL v2.0
+- [junit5](https://github.com/junit-team/junit5): EPL v2.0
+- [opentest4j](https://github.com/ota4j-team/opentest4j): Apache 2.0 License

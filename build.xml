@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="databasedumper" default="default" basedir=".">
+<project name="databasedumper" default="default" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
     <description>Builds, tests, and runs the project databasedumper.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -90,5 +90,48 @@
             <entry key="password" operation="=" value="${databasedumper.password}" />
             <entry key="schema" operation="=" value="${databasedumper.schema}" />
         </propertyfile>
+    </target>
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="coverage/lib/jacocoant.jar"/>
+    </taskdef>
+    <target depends="init,compile-test,-init-test-run-module-properties,-pre-test-run" if="have.tests" name="-do-test-run">
+        <path id="test.classpath">
+            <pathelement location="${build.test.classes.dir}" />
+            <pathelement location="${build.classes.dir}" />
+            <fileset dir="lib" includes="*.jar" />
+        </path>
+        <jacoco:agent property="jacocoagent" destfile="build/test/jacoco.exec"/>
+        <java classpathref="test.classpath" classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="true">
+            <arg value="--scan-classpath"/>
+            <arg line="--reports-dir build/test/junit"/>
+            <jvmarg value="${jacocoagent}"/>
+        </java>
+    </target>
+    <target depends="init" if="have.tests" name="test-report">
+        <mkdir dir="${build.dir}/test/junit" />
+        <mkdir dir="${build.dir}/test/jacoco" />
+        <mkdir dir="${build.dir}/test/html" />
+        <junitreport todir="${build.dir}/test/junit" tofile="junit.xml">
+            <fileset dir="${build.dir}/test/results">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${build.dir}/test/html" />
+        </junitreport>
+        <move file="${build.dir}/test/html/index.html" tofile="${build.dir}/test/html/htmlReport.html" />
+        <jacoco:report>
+            <executiondata>
+                <file file="${build.dir}/test/jacoco.exec" />
+            </executiondata>
+            <structure name="MonetDB dumper">
+                <classfiles>
+                    <fileset dir="${build.classes.dir}" />
+                </classfiles>
+                <sourcefiles>
+                    <fileset dir="${src.dir}" />
+                </sourcefiles>
+            </structure>
+            <html destdir="${build.dir}/test/jacoco" />
+            <xml destfile="${build.dir}/test/jacoco.xml" />
+        </jacoco:report>
     </target>
 </project>
