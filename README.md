@@ -11,10 +11,10 @@ out unencrypted data from the table before exporting) or for backups.
 
 ## Installation: Requirements and configuration
 
-The dumper application has been tested with OpenJDK 8. In order to build the 
-application, we use Ant 1.10.1+ with the JDK (a package with `javac`). Make 
-sure your `JAVA_HOME` environment variable points to the correct JDK directory 
-if you have multiple possible installations.
+The dumper application has been tested with Semeru OpenJDK 21. In order to 
+build the application, we use Ant 1.10.14+ with the JDK (a package with 
+`javac`). Make sure your `JAVA_HOME` environment variable points to the correct 
+JDK directory if you have multiple possible installations.
 
 Before building, ensure you have create a file in the path 
 `nbproject/private/config.properties`, possibly by copying the 
@@ -34,16 +34,24 @@ the correct port to connect to the database and the name of the database
 (`gros` by default).
 
 Now run the following command in order to build the MonetDB dumper application: 
-`ant -buildfile build.xml -propertyfile nbproject/private/config.properties`
+```
+ant -buildfile build.xml -propertyfile nbproject/private/config.properties
+```
 
 The application is then made available in `dist/databasedumper.jar`.
 
 ## Running
 
-Run the application as follows: `java -Ddatabasedumper.encrypted=true -jar 
-dist/databasedumper.jar TABLE OUTPUT.csv.gz`. Skip the `-D` define if you want 
-to export unencrypted personal data as well. Replace the `TABLE` and `OUTPUT` 
-with the table name and output file path, respectively.
+Run the application as follows:
+
+```
+java -Ddatabasedumper.encrypted=true -jar dist/databasedumper.jar TABLE OUTPUT
+```
+
+Skip the `-D` define if you want to export unencrypted personal data as well. 
+Replace the `TABLE` and `OUTPUT` with the table name and output file path, 
+respectively. The output file will be a CSV file compressed with GZip, so 
+typically the extension of the file is `.csv.gz`.
 
 ## License
 
